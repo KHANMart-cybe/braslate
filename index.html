@@ -1,0 +1,338 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>JK Brand Store</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Arial;
+}
+
+body{
+background:#f4f4f4;
+}
+
+/* NAVBAR */
+
+.nav{
+background:#000;
+color:white;
+display:flex;
+justify-content:space-between;
+padding:15px 30px;
+}
+
+.cartbtn{
+background:white;
+color:black;
+border:none;
+padding:6px 12px;
+cursor:pointer;
+}
+
+/* PRODUCTS */
+
+.products{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+padding:30px;
+}
+
+.product{
+background:white;
+padding:15px;
+border-radius:8px;
+}
+
+.product img{
+width:100%;
+border-radius:6px;
+}
+
+.product button{
+margin-top:10px;
+width:100%;
+padding:10px;
+border:none;
+background:black;
+color:white;
+cursor:pointer;
+}
+
+/* CART */
+
+.cart{
+position:fixed;
+right:-350px;
+top:0;
+width:350px;
+height:100%;
+background:white;
+box-shadow:-3px 0 10px rgba(0,0,0,.2);
+padding:20px;
+transition:.3s;
+overflow:auto;
+}
+
+.cart.open{
+right:0;
+}
+
+/* FORM */
+
+input{
+width:100%;
+padding:8px;
+margin-top:6px;
+margin-bottom:10px;
+}
+
+.whatsapp{
+background:#25D366;
+border:none;
+padding:12px;
+color:white;
+width:100%;
+cursor:pointer;
+}
+
+/* ADMIN */
+
+.admin{
+background:#fff;
+margin:30px;
+padding:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- NAV -->
+
+<div class="nav">
+
+<h2>JK Brand</h2>
+
+<button class="cartbtn" onclick="toggleCart()">
+Cart (<span id="cartcount">0</span>)
+</button>
+
+</div>
+
+
+<!-- PRODUCTS -->
+
+<div class="products" id="products"></div>
+
+
+<!-- CART -->
+
+<div class="cart" id="cart">
+
+<h2>Your Cart</h2>
+
+<div id="cartitems"></div>
+
+<h3>Customer Details</h3>
+
+<input id="name" placeholder="Name">
+
+<input id="phone" placeholder="Phone">
+
+<input id="address" placeholder="Address">
+
+<button class="whatsapp" onclick="checkout()">
+Order via WhatsApp
+</button>
+
+</div>
+
+
+
+<!-- ADMIN PANEL -->
+
+<div class="admin">
+
+<h3>Admin Panel</h3>
+
+<input id="pname" placeholder="Product name">
+
+<input id="pprice" placeholder="Price">
+
+<input id="pimg" placeholder="Image URL">
+
+<button onclick="addProduct()">Add Product</button>
+
+</div>
+
+
+
+<script>
+
+/* STORAGE */
+
+let products = JSON.parse(localStorage.getItem("products")) || [
+
+{
+name:"JK Bracelet Black",
+price:999,
+img:"https://picsum.photos/300?1"
+},
+
+{
+name:"JK Bracelet Gold",
+price:999,
+img:"https://picsum.photos/300?2"
+},
+
+{
+name:"JK Bracelet Silver",
+price:999,
+img:"https://picsum.photos/300?3"
+}
+
+]
+
+let cart=[]
+
+
+/* LOAD PRODUCTS */
+
+function loadProducts(){
+
+let html=""
+
+products.forEach((p,i)=>{
+
+html+=`
+<div class="product">
+
+<img src="${p.img}">
+
+<h3>${p.name}</h3>
+
+<p>PKR ${p.price}</p>
+
+<button onclick="addToCart(${i})">
+Add to Cart
+</button>
+
+</div>
+`
+
+})
+
+document.getElementById("products").innerHTML=html
+
+}
+
+loadProducts()
+
+
+/* CART */
+
+function addToCart(i){
+
+cart.push(products[i])
+
+document.getElementById("cartcount").innerText=cart.length
+
+renderCart()
+
+}
+
+function renderCart(){
+
+let html=""
+
+cart.forEach(p=>{
+
+html+=`
+<p>
+${p.name} - ${p.price}
+</p>
+`
+
+})
+
+document.getElementById("cartitems").innerHTML=html
+
+}
+
+
+function toggleCart(){
+
+document.getElementById("cart").classList.toggle("open")
+
+}
+
+
+/* CHECKOUT */
+
+function checkout(){
+
+let name=document.getElementById("name").value
+let phone=document.getElementById("phone").value
+let address=document.getElementById("address").value
+
+if(cart.length==0){
+alert("Cart empty")
+return
+}
+
+let message="New Order - JK Brand\n\n"
+
+cart.forEach(p=>{
+message+=`${p.name} - ${p.price}\n`
+})
+
+message+=`\nName: ${name}\nPhone: ${phone}\nAddress: ${address}`
+
+let url=`https://wa.me/923335100189?text=${encodeURIComponent(message)}`
+
+window.open(url)
+
+}
+
+
+/* ADMIN */
+
+function addProduct(){
+
+let name=document.getElementById("pname").value
+let price=document.getElementById("pprice").value
+let img=document.getElementById("pimg").value
+
+products.push({
+name,
+price,
+img
+})
+
+localStorage.setItem("products",JSON.stringify(products))
+
+loadProducts()
+
+alert("Product added")
+
+}
+
+</script>
+
+
+</body>
+</html>
+```
